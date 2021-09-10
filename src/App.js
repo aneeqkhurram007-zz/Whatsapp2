@@ -26,7 +26,7 @@ function App() {
             <div className="app__body">
               <Sidebar />
               <Route path="/" exact component={Chat} />
-              <Route path="/room/:roomID" component={Chat} />
+              <Route path="/users/:userEmail/room/:roomID" component={Chat} />
 
             </div>
           </div>

@@ -8,17 +8,17 @@ import { useStateValue } from '../../StateProvider'
 import { doc, onSnapshot, collection, addDoc, Timestamp, orderBy, query } from 'firebase/firestore'
 const Chat = () => {
     const [{ user }] = useStateValue()
-    const { roomID } = useParams();
+    const { roomID, userEmail } = useParams();
     const [name, setname] = useState('')
     const [message, setmessage] = useState('')
     const [messages, setmessages] = useState([])
     useEffect(() => {
         if (roomID) {
-            onSnapshot(doc(db, "room", roomID), (snapshot) => {
+            onSnapshot(doc(db, `users/${user.email}/room`, roomID), (snapshot) => {
                 setname(snapshot.data().name)
             })
 
-            onSnapshot(query(collection(doc(db, "room", roomID), "messages"), orderBy('timestamp', 'asc')), (snapshot) => {
+            onSnapshot(query(collection(doc(db, `users/${user.email}/room`, roomID), "messages"), orderBy('timestamp', 'asc')), (snapshot) => {
                 // setmessages(snapshot.data())
                 setmessages(snapshot.docs.map(doc => doc.data()));
             })
@@ -30,7 +30,7 @@ const Chat = () => {
         if (!message) {
             alert("Please enter your message")
         }
-        addDoc(collection(doc(db, "room", roomID), "messages"), {
+        addDoc(collection(doc(db, `users/${user.email}/room`, roomID), "messages"), {
             name: user.displayName,
             message,
             timestamp: Timestamp.now()

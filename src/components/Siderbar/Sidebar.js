@@ -12,7 +12,7 @@ const Sidebar = () => {
     const [{ user }] = useStateValue();
     const [rooms, setrooms] = useState([])
     useEffect(() => {
-        onSnapshot(collection(db, "room"), (snapshot) => {
+        onSnapshot(collection(db, `users/${user.email}/room`), (snapshot) => {
             setrooms(snapshot.docs.map((doc) => {
                 return {
                     id: doc.id,

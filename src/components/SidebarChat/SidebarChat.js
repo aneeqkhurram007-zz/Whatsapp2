@@ -4,8 +4,9 @@ import './SidebarChat.css'
 import { db } from '../../Firebase/firebase'
 import { collection, addDoc, doc, onSnapshot, query, orderBy } from '@firebase/firestore'
 import { useHistory } from 'react-router-dom'
+import { useStateValue } from '../../StateProvider'
 const SidebarChat = ({ addNewChat, id, name }) => {
-
+    const [{ user }] = useStateValue()
     const [seed, setSeed] = useState(" ")
     const [lastMessage, setLastMessage] = useState('')
     const photoURL = `https://avatars.dicebear.com/api/avataaars/${seed}.svg`
@@ -13,7 +14,7 @@ const SidebarChat = ({ addNewChat, id, name }) => {
 
 
         if (id) {
-            onSnapshot(query(collection(doc(db, "room", id), "messages"), orderBy('timestamp', 'desc')), snapshot => setLastMessage(
+            onSnapshot(query(collection(doc(db, `users/${user.email}/room`, id), "messages"), orderBy('timestamp', 'desc')), snapshot => setLastMessage(
                 snapshot.docs.map(doc => doc.data())))
         }
 
@@ -23,7 +24,7 @@ const SidebarChat = ({ addNewChat, id, name }) => {
     const createChat = () => {
         const room = prompt("Please enter room name")
         if (room) {
-            addDoc(collection(db, "room"), {
+            addDoc(collection(db, `users/${user.email}/room`), {
                 name: room
             })
         }
@@ -32,7 +33,7 @@ const SidebarChat = ({ addNewChat, id, name }) => {
     return (
         !addNewChat ? (
 
-            <div className="siderbar__chat" onClick={() => history.push('/room/' + id)}>
+            <div className="siderbar__chat" onClick={() => history.push('/users/' + user.email + '/room/' + id)}>
                 <Avatar src={photoURL} />
                 <div className="sidebar__chatInfo">
                     <h2>{name}</h2>
